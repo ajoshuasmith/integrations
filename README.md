@@ -183,6 +183,25 @@ Cloudflare Workers Builds (the repo's git integration) builds and deploys every 
 automatically — the "Workers Builds: integrationsdotsh" check on each commit. The commands above
 are for manual/emergency deploys only.
 
+### StackYapper registry deployment
+
+The fork includes a separate, read-only deployment overlay for StackYapper. It serves only
+`/health`, `/api.json`, `/api/{domain}/surface`, and registry-owned `/specs/*` assets. It does not
+expose integrations.sh discovery, MCP, analytics, mutable KV, or LLM-backed routes.
+The registry build rewrites integrations.sh-owned spec URLs in the generated assets before upload,
+so Cloudflare serves and validates the exact mirrored bytes without a runtime upstream dependency.
+
+Keep `main` aligned with upstream and carry this overlay on a StackYapper branch. Before deploying,
+update `REGISTRY_UPSTREAM_COMMIT` in `wrangler.stackyapper.jsonc` to the exact validated upstream
+commit. The Worker fails closed when that full SHA is absent or malformed. The StackYapper config
+routes the catalog to `registry.stackyapper.dev`.
+
+```bash
+bun run build:registry
+bun run cf:registry:dev
+bun run cf:registry:deploy
+```
+
 ---
 
 ## Data sources

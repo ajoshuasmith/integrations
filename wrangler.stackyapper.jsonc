@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "stackyapper-integrations-registry",
+  "main": "./worker/stackyapper-registry.ts",
+  "compatibility_date": "2026-08-30",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "registry.stackyapper.dev", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./dist-registry",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "not_found_handling": "none"
+  },
+  "vars": {
+    "REGISTRY_SOURCE_REPOSITORY": "https://github.com/ajoshuasmith/integrations",
+    "REGISTRY_UPSTREAM_COMMIT": "5606ced463b7bd3a93fa55b90a35f6e5eba93ccb"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
