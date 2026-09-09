@@ -81,11 +81,11 @@ async function mirrorSlice(id: string, name: string, scopes: readonly string[]):
   // clients name an added integration from info.title.
   spec.info = { ...spec.info, title: name };
 
-  const delegatedScopes = [
+  const delegatedScopes = [...new Set([
     ...presets.MICROSOFT_GRAPH_BASE_SCOPES,
     presets.MICROSOFT_GRAPH_IDENTITY_SCOPE,
     ...scopes,
-  ];
+  ])];
   const scopeMap = Object.fromEntries(delegatedScopes.map((scope) => [scope, ""]));
   spec.components = {
     ...spec.components,
@@ -119,7 +119,7 @@ async function mirrorSlice(id: string, name: string, scopes: readonly string[]):
   );
   writeFileSync(join(OUT, `${id}.json`), specText);
   console.log(`${id}: ${paths.length} paths, ${operations} operations, ${(specText.length / 1e6).toFixed(1)} MB`);
-  return { bytes: specText.length, paths: paths.length, operations, scopes: delegatedScopes };
+  return { bytes: Buffer.byteLength(specText, "utf8"), paths: paths.length, operations, scopes: delegatedScopes };
 }
 
 async function main(): Promise<void> {
